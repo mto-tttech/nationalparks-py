@@ -1,12 +1,15 @@
 from mod_wsgi import express
 
-express.start_server(
-    application_type='module',
-    entry_point='wsgi',
-    port=8080,
-    log_to_terminal=True,
-    log_level='info',
-    access_log=True,
-    inactivity_timeout=60,
-    url_aliases=[('/ws/healthz/', '/opt/app-root/src/LICENSE')]
+express.start(
+    '--log-to-terminal',
+    '--log-level', 'info',
+    '--access-log',
+    '--port', '8080',
+    '--trust-proxy-header', 'X-Forwarded-For',
+    '--trust-proxy-header', 'X-Forwarded-Port',
+    '--trust-proxy-header', 'X-Forwarded-Proto',
+    '--application-type', 'module',
+    '--entry-point', 'wsgi',
+    '--inactivity-timeout', '60',
+    '--url-alias', '/ws/healthz/', '/opt/app-root/src/LICENSE'
 )
