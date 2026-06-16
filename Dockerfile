@@ -18,4 +18,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8080
 
-CMD ["python", "app.py"]
+
+CMD ["mod_wsgi-express", "start-server", "wsgi.py", \
+     "--log-to-terminal", \
+     "--log-level", "info", \
+     "--access-log", \
+     "--port", "8080", \
+     "--trust-proxy-header", "X-Forwarded-For", \
+     "--trust-proxy-header", "X-Forwarded-Port", \
+     "--trust-proxy-header", "X-Forwarded-Proto", \
+     "--application-type", "module", \
+     "--entry-point", "application", \
+     "--inactivity-timeout", "60"]
