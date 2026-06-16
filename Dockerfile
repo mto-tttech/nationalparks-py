@@ -1,16 +1,21 @@
-FROM centos/python-36-centos7:latest
+FROM registry.access.redhat.com/ubi9/python-312
 
 USER root
 
-COPY . /tmp/src
-
-RUN rm -rf /tmp/src/.git* && \
-    chown -R 1001 /tmp/src && \
-    chgrp -R 0 /tmp/src && \
-    chmod -R g+w /tmp/src
+# Install Apache + build tools (needed for mod_wsgi)
+RUN dnf install -y httpd httpd-devel gcc make && \
+    dnf clean all
 
 USER 1001
 
-RUN /usr/libexec/s2i/assemble
+WORKDIR /opt/app-root/src
 
-CMD [ "/usr/libexec/s2i/run" ]
+# Copy your app
+COPY . .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 8080
+
+CMD ["python", "app.py"]
